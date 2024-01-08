@@ -1,0 +1,37 @@
+local s,id=GetID()
+function s.initial_effect(c)
+	Gacha2.UnitCharacter(c)
+	Gacha3.DuelAtkUnitCharacter(c)
+	local e1=Effect.CreateEffect(c)
+	e1:SetDescription(aux.Stringid(id,0))
+	e1:SetType(EFFECT_TYPE_XMATERIAL+EFFECT_TYPE_IGNITION)
+	e1:SetCondition(s.ftcon)
+	e1:SetOperation(s.ftop)
+	c:RegisterEffect(e1)
+end
+function s.ftcon(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	return Duel.GetFieldGroupCount(c:GetControler(),LOCATION_EXTRA,0,nil)>=4 and not c:IsSetCard(0xb07)
+end
+function s.ftop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	local fortune=c:GetOverlayGroup():FilterSelect(tp,Card.IsCode,1,1,nil,id)
+	Duel.Remove(fortune,POS_FACEUP,REASON_EFFECT)
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE)
+	e1:SetCode(EFFECT_ADD_SETCODE)
+	e1:SetRange(LOCATION_ONFIELD)
+	e1:SetValue(0xb07)
+	e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+	c:RegisterEffect(e1)
+	
+	local deck=Duel.GetMatchingGroup(nil,tp,0,LOCATION_DECK,nil)
+	local refill=Duel.GetMatchingGroup(nil,tp,0,LOCATION_GRAVE,nil)
+	if Duel.GetMatchingGroupCount(nil,tp,0,LOCATION_DECK,nil)<2 then
+	Duel.SendtoGrave(deck,REASON_RULE)
+	Duel.SendtoDeck(refill,nil,SEQ_DECKSHUFFLE,REASON_RULE)
+	Duel.SendtoDeck(deck,nil,0,REASON_RULE)	end
+	local g=Duel.GetDecktopGroup(1-tp,2)
+	Duel.Remove(g,POS_FACEUP,REASON_EFFECT)
+end

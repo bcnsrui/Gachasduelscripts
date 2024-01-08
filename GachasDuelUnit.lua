@@ -301,7 +301,7 @@ function Gacha2.tgcon1(e)
 	return e:GetHandler():IsSetCard(0xa07)
 end
 function Gacha2.tgfilter2(e,c)
-	return not c:IsLevelBelow(5)
+	return not c:IsLevelBelow(4)
 end
 function Gacha2.tgcon2(e)
 	return e:GetHandler():IsSetCard(0xa08)
